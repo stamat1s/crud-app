@@ -60,19 +60,33 @@ fetchClients();
     }
   }
 
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this client?");
+    if (confirmDelete) {
+        try {
+            await axios.delete(`http://localhost:3000/api/clients/${id}`); // API call to delete client
+            setTableData((prevData) => prevData.filter(client => client.id !== id)); // Update state
+        } catch (err) {
+            setError(err.message); // Handle any errors
+        }
+    }
+};
+
+
   return (
     <>
      <NavBar onOpen={() => handleOpen('add')} onSearch = {setSearchTerm} /> 
-     <TableList handleOpen={handleOpen} searchTerm={searchTerm}  setTableData={setTableData} tableData={tableData}/>
+     <TableList handleOpen={handleOpen} handleDelete={handleDelete} searchTerm={searchTerm} tableData={tableData}/>
      <ModalForm isOpen = {isOpen} OnSubmit={handleSubmit} onClose={() => setIsOpen(false)} mode={modalMode} clientData={clientData}/>
     </>
   )
-  //onOpen: Called when the user clicks the "Add" button in the NavBar. (OK)
+  //onOpen: Called when the user clicks the "Add" button in the NavBar. 
   //onSearch: updates the searchTerm state in the parent when the user types in the search input. 
-  //handleOpen: Called when a user clicks "Edit" on a client.
-  //searchTerm: Used to filter the client list. Only show items matching the user's search input.
-  //setTableData: Lets TableList update the list (e.g., after deletion or local sorting).
+  //handleOpen: Called when a user clicks "Edit" on a client. 
+  //handleDelete: Called when a user clicks "Delete" on a record.
+  //searchTerm: Used to filter the client list. Only show items matching the user's search input, from onSearch of Navbar 
   //tableData: The list of all clients to display in the table.
+  //...
 }
 
 export default App
